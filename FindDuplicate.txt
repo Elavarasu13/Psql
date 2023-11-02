@@ -1,0 +1,38 @@
+create table person(id int , email varchar(15));
+CREATE TABLE
+postgres=# insert into person values(1,a@b.com) , (2,c@d.com),(3,a@b.com);
+ERROR:  column "a" does not exist
+LINE 1: insert into person values(1,a@b.com) , (2,c@d.com),(3,a@b.co...
+                                    ^
+postgres=# select * from person
+postgres-# ;
+ id | email 
+----+-------
+(0 rows)
+
+postgres=# insert into person values(1,'a@b.com') , (2,'c@d.com'),(3,'a@b.com');
+INSERT 0 3
+postgres=# select * from person;
+ id |  email  
+----+---------
+  1 | a@b.com
+  2 | c@d.com
+  3 | a@b.com
+(3 rows)
+
+postgres=# select email from person GROUP BY email HAVING COUNT(email)>1; 
+  email  
+---------
+ a@b.com
+(1 row)
+
+postgres=# select email from person  HAVING COUNT(email)>1; 
+ERROR:  column "person.email" must appear in the GROUP BY clause or be used in an aggregate function
+LINE 1: select email from person  HAVING COUNT(email)>1;
+               ^
+postgres=# select email from person group by email  HAVING COUNT(email)>1; 
+  email  
+---------
+ a@b.com
+(1 row)
+

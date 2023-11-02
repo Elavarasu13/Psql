@@ -1,0 +1,135 @@
+create table customer (customer_id int generated always as identity,customer_name varchar(255) notnull , primary Key (customer_id));
+ERROR:  syntax error at or near "notnull"
+LINE 1: ...ted always as identity,customer_name varchar(255) notnull , ...
+                                                             ^
+postgres=# create table customer (customer_id int generated always as identity,customer_name varchar(255) NOT NULL , primary Key (customer_id));
+CREATE TABLE
+postgres=# \D
+invalid command \D
+Try \? for help.
+postgres=# \d
+                    List of relations
+ Schema |           Name           |   Type   |  Owner   
+--------+--------------------------+----------+----------
+ public | customer                 | table    | postgres
+ public | customer_customer_id_seq | sequence | postgres
+ public | employee                 | table    | postgres
+ public | player                   | table    | postgres
+ public | product1                 | table    | postgres
+ public | std                      | table    | postgres
+ public | std_sid_seq              | sequence | postgres
+ public | student                  | table    | postgres
+ public | student_stud_id_seq      | sequence | postgres
+ public | team                     | table    | postgres
+(10 rows)
+
+postgres=# insert into customer values(1,'ela');
+ERROR:  cannot insert a non-DEFAULT value into column "customer_id"
+DETAIL:  Column "customer_id" is an identity column defined as GENERATED ALWAYS.
+HINT:  Use OVERRIDING SYSTEM VALUE to override.
+postgres=# insert into customer values(customer_name)values('ela');
+ERROR:  syntax error at or near "values"
+LINE 1: insert into customer values(customer_name)values('ela');
+                                                  ^
+postgres=# select * from customer;
+ customer_id | customer_name 
+-------------+---------------
+(0 rows)
+
+postgres=# insert into customer (customer_name) values ('Elavarasu');
+INSERT 0 1
+postgres=# select * from customer;
+ customer_id | customer_name 
+-------------+---------------
+           1 | Elavarasu
+(1 row)
+
+postgres=# \d cutomer
+Did not find any relation named "cutomer".
+postgres=# \d customer;
+postgres=# insert into customer (customer_name)  values ('rajini'),('kamal');
+INSERT 0 2
+postgres=# insert into contacts(customer_id,contact_name,phone,email) values(1,'rajini','123456','rajini@gmail.com'),(1.'kamal','45678','kamal@gmail.com'),(2,'vijayakanth','3456','vijayakanth@gmail.com');
+ERROR:  syntax error at or near "'kamal'"
+LINE 1: ...values(1,'rajini','123456','rajini@gmail.com'),(1.'kamal','4...
+                                                             ^
+postgres=# insert into contacts(customer_id,contact_name,phone,email) values(1,'rajini','123456','rajini@gmail.com'),(1,'kamal','45678','kamal@gmail.com'),(2,'vijayakanth','3456','vijayakanth@gmail.com');
+ERROR:  relation "contacts" does not exist
+LINE 1: insert into contacts(customer_id,contact_name,phone,email) v...
+                    ^
+postgres=# create table contacts (contact_id int generated always as identity,customer_id int,contact_name varchar(255)  not null ,phone varchar(15),email varchar(100),primary key(contact_id),constraint fk_customer foreign key(customer_id) references customer(customer_id) on delete cascade); 
+CREATE TABLE
+postgres=# insert into contacts(customer_id,contact_name,phone,email) values(1,'rajini','123456','rajini@gmail.com'),(1,'kamal','45678','kamal@gmail.com'),(2,'vijayakanth','3456','vijayakanth@gmail.com');
+INSERT 0 3
+postgres=# \d
+                    List of relations
+ Schema |           Name           |   Type   |  Owner   
+--------+--------------------------+----------+----------
+ public | contacts                 | table    | postgres
+ public | contacts_contact_id_seq  | sequence | postgres
+ public | customer                 | table    | postgres
+ public | customer_customer_id_seq | sequence | postgres
+ public | employee                 | table    | postgres
+ public | player                   | table    | postgres
+ public | product1                 | table    | postgres
+ public | std                      | table    | postgres
+ public | std_sid_seq              | sequence | postgres
+ public | student                  | table    | postgres
+ public | student_stud_id_seq      | sequence | postgres
+ public | team                     | table    | postgres
+(12 rows)
+
+postgres=# \l
+                             List of databases
+   Name    |  Owner   | Encoding | Collate | Ctype |   Access privileges   
+-----------+----------+----------+---------+-------+-----------------------
+ moviedb   | postgres | UTF8     | en_IN   | en_IN | 
+ postgres  | postgres | UTF8     | en_IN   | en_IN | 
+ template0 | postgres | UTF8     | en_IN   | en_IN | =c/postgres          +
+           |          |          |         |       | postgres=CTc/postgres
+ template1 | postgres | UTF8     | en_IN   | en_IN | =c/postgres          +
+           |          |          |         |       | postgres=CTc/postgres
+(4 rows)
+
+postgres=# \d
+                    List of relations
+ Schema |           Name           |   Type   |  Owner   
+--------+--------------------------+----------+----------
+ public | contacts                 | table    | postgres
+ public | contacts_contact_id_seq  | sequence | postgres
+ public | customer                 | table    | postgres
+ public | customer_customer_id_seq | sequence | postgres
+ public | employee                 | table    | postgres
+ public | player                   | table    | postgres
+ public | product1                 | table    | postgres
+ public | std                      | table    | postgres
+ public | std_sid_seq              | sequence | postgres
+ public | student                  | table    | postgres
+ public | student_stud_id_seq      | sequence | postgres
+ public | team                     | table    | postgres
+(12 rows)
+
+postgres=# select * from contacts;
+ contact_id | customer_id | contact_name | phone  |         email         
+------------+-------------+--------------+--------+-----------------------
+          1 |           1 | rajini       | 123456 | rajini@gmail.com
+          2 |           1 | kamal        | 45678  | kamal@gmail.com
+          3 |           2 | vijayakanth  | 3456   | vijayakanth@gmail.com
+(3 rows)
+
+postgres=# select * from customer;
+ customer_id | customer_name 
+-------------+---------------
+           1 | Elavarasu
+           2 | rajini
+           3 | kamal
+(3 rows)
+
+postgres=# delete from customer where customer_id = 1;
+DELETE 1
+postgres=# select * from contacts;
+ contact_id | customer_id | contact_name | phone |         email         
+------------+-------------+--------------+-------+-----------------------
+          3 |           2 | vijayakanth  | 3456  | vijayakanth@gmail.com
+(1 row)
+
